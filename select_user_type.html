@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select User Type</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Online Student Feedback System</h1>
+    </header>
+    <div class="container">
+        <h2>Select User Type</h2>
+        <form onsubmit="handleFormSubmit(event)">
+            <label>
+                <input type="radio" name="userType" value="student" required> Student
+            </label>
+            <label>
+                <input type="radio" name="userType" value="admin" required> Admin
+            </label>
+            <input type="submit" value="Continue">
+        </form>
+    </div>
+    <script>
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const userType = document.querySelector('input[name="userType"]:checked');
+            if (userType) {
+                if (userType.value === 'student') {
+                    window.location.href = 'student_login.html';
+                } else if (userType.value === 'admin') {
+                    window.location.href = 'admin_login.html';
+                }
+            } else {
+                alert("Please select a user type.");
+            }
+        }
+    </script>
+</body>
+</html>

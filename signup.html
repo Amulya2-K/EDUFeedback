@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Sign Up</h1>
+    </header>
+    <div class="container">
+        <h2>Create an Account</h2>
+        <form id="signupForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="userType">Sign up as:</label>
+            <select id="userType" name="userType" required>
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <input type="submit" value="Sign Up">
+        </form>
+        <p>Already have an account? <a href="select_user_type.html">Login here</a></p>
+    </div>
+
+    <script>
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest("SHA-256", data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            let username = document.getElementById("username").value.trim();
+            let password = document.getElementById("password").value;
+            let userType = document.getElementById("userType").value;
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            if (users.find(user => user.username === username)) {
+                alert("Username already exists! Choose another one.");
+                return;
+            }
+
+            let hashedPassword = await hashPassword(password);
+            users.push({ username, password: hashedPassword, userType });
+            localStorage.setItem("users", JSON.stringify(users));
+
+            alert("Sign-up successful! You can now log in.");
+            window.location.href = "select_user_type.html";
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Student Feedback System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles for the fade-out effect */
+        .fade-out {
+            animation: fadeOut 2s forwards; /* Fade out over 2 seconds */
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Online Student Feedback System</h1>
+    </header>
+    <div class="container">
+        <h2 id="welcomeMessage">Welcome</h2>
+    </div>
+
+    <script>
+        // Function to fade out the welcome message and redirect
+        function fadeOutAndRedirect() {
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            welcomeMessage.classList.add('fade-out'); // Add fade-out class
+
+            // Wait for the animation to finish before redirecting
+            setTimeout(() => {
+                window.location.href = 'select_user_type.html'; // Redirect to user type selection
+            }, 2000); // Match the timeout with the animation duration
+        }
+
+        // Start the fade-out and redirect process after a short delay
+        setTimeout(fadeOutAndRedirect, 1000); // Start after 1 second
+    </script>
+</body>
+</html>

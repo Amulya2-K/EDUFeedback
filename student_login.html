@@ -1,0 +1,93 @@
+<!-- Updated student_login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Student Login</h1>
+    </header>
+    <div class="container">
+        <h2>Login as Student</h2>
+        <form id="studentLoginForm">
+            <label for="rollNumber">Roll Number:</label>
+            <input type="text" id="rollNumber" name="rollNumber" pattern="[A-Za-z0-9]{10}" title="Roll Number must be 10 alphanumeric characters" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="branch">Select Branch:</label>
+            <select id="branch" name="Branch" required onchange="loadSections()">
+                <option value="">Select Branch</option>
+                <option value="CSE">CSE</option>
+                <option value="IT">IT</option>
+                <option value="CSM">CSM</option>
+                <option value="CSD">CSD</option>
+                <option value="CSC">CSC</option>
+                <option value="ECE">ECE</option>
+                <option value="EEE">EEE</option>
+                <option value="EIE">EIE</option>
+                <option value="ME">ME</option>
+                <option value="CE">CE</option>
+            </select>
+            
+            <label for="section">Select Section:</label>
+            <select id="section" name="Section" required>
+                <option value="">Select Section</option>
+            </select>
+            
+            <br><br>
+            <input type="submit" value="Login">
+        </form>
+        <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+    </div>
+
+    <script>
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest("SHA-256", data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        function loadSections() {
+            const sectionDropdown = document.getElementById("section");
+            sectionDropdown.innerHTML = '<option value="">Select Section</option>';
+            const sections = Array.from({ length: 10 }, (_, i) => String.fromCharCode(65 + i)); // A to J
+            sections.forEach(section => {
+                let option = document.createElement("option");
+                option.value = `Section ${section}`;
+                option.textContent = `Section ${section}`;
+                sectionDropdown.appendChild(option);
+            });
+        }
+
+        document.getElementById("studentLoginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            let rollNumber = document.getElementById("rollNumber").value.trim();
+            let password = document.getElementById("password").value;
+            let branch = document.getElementById("branch").value;
+            let section = document.getElementById("section").value;
+            let hashedPassword = await hashPassword(password);
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let user = users.find(user => user.username === rollNumber && user.password === hashedPassword && user.userType === "student");
+
+            if (!user) {
+                alert("Invalid credentials! Please try again.");
+                return;
+            }
+
+            // Store logged-in student details in localStorage
+            localStorage.setItem("loggedInStudent", JSON.stringify({ rollNumber, branch, section }));
+
+            alert("Login successful!");
+            window.location.href = "feedback.html"; // Redirect to feedback form
+        });
+    </script>
+</body>
+</html>

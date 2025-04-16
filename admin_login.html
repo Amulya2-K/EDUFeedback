@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Login</h1>
+    </header>
+    <div class="container">
+        <h2>Login as Admin</h2>
+        <form id="adminLoginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <input type="submit" value="Login">
+        </form>
+        <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+    </div>
+
+    <script>
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest("SHA-256", data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        document.getElementById("adminLoginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            let username = document.getElementById("username").value.trim();
+            let password = document.getElementById("password").value;
+            let hashedPassword = await hashPassword(password);
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let user = users.find(user => user.username === username && user.password === hashedPassword && user.userType === "admin");
+
+            if (!user) {
+                alert("Invalid credentials! Please try again.");
+                return;
+            }
+
+            alert("Login successful!");
+            window.location.href = "admin_dashboard.html";
+        });
+    </script>
+</body>
+</html>

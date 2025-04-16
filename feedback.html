@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Feedback</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .custom-select {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .select-selected {
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .select-items {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            width: 100%;
+            z-index: 99;
+        }
+        .select-items div {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .select-items div:hover {
+            background-color: #ddd;
+        }
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Online Student Feedback System</h1>
+    </header>
+    <div class="container">
+        <h2 id="feedbackHeader">Submit Your Feedback</h2>
+        <form id="feedbackForm">
+            <input type="hidden" id="rollNumber" value="12345">
+            <input type="hidden" id="section" value="A">
+            <input type="hidden" id="subjectIndex" value="0">
+            <input type="hidden" id="subjects" value='["Operating System", "Computer Organisation", "Database Management System", "Advanced Data Structures through Java", "Software Engineering"]'>
+
+            <label id="subjectLabel"></label>
+            <div id="questionsContainer"></div>
+            <br><br>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+    <script>
+        const subjects = JSON.parse(document.getElementById('subjects').value);
+        let subjectIndex = parseInt(document.getElementById('subjectIndex').value);
+        const rollNumber = document.getElementById('rollNumber').value;
+        const section = document.getElementById('section').value;
+
+        const questions = [
+            "How would you rate the clarity of the course material?",
+            "How engaging did you find the course content?",
+            "How would you rate the instructor's teaching effectiveness?",
+            "How would you rate the quality of the course resources?",
+            "Overall, how satisfied are you with the course?"
+        ];
+
+        function generateQuestions() {
+            const container = document.getElementById("questionsContainer");
+            container.innerHTML = "";
+
+            questions.forEach((question, index) => {
+                const div = document.createElement("div");
+                div.innerHTML = `
+                    <label>${index + 1}. ${question}</label>
+                    <div class="custom-select">
+                        <div class="select-selected" id="selected-q${index}" onclick="toggleDropdown('q${index}')">Select an option</div>
+                        <div class="select-items" id="q${index}-options">
+                            <div onclick="setOption('q${index}', 'Very Satisfied')">Very Satisfied</div>
+                            <div onclick="setOption('q${index}', 'Satisfied')">Satisfied</div>
+                            <div onclick="setOption('q${index}', 'Neutral')">Neutral</div>
+                            <div onclick="setOption('q${index}', 'Dissatisfied')">Dissatisfied</div>
+                            <div onclick="setOption('q${index}', 'Very Dissatisfied')">Very Dissatisfied</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="q${index}" required>
+                    <span class="error" id="error-q${index}">Please select an option</span>
+                    <br><br>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function displaySubject() {
+            if (subjectIndex < subjects.length) {
+                document.getElementById('subjectLabel').textContent = `Feedback for Subject: ${subjects[subjectIndex]}`;
+                generateQuestions();
+            } else {
+                alert("All feedback submitted! Thank you.");
+                window.location.href = 'thank_you.html';
+            }
+        }
+
+        function toggleDropdown(id) {
+            document.getElementById(id + "-options").style.display = 
+                document.getElementById(id + "-options").style.display === "block" ? "none" : "block";
+        }
+
+        function setOption(id, value) {
+            document.getElementById(id).value = value;
+            document.getElementById("selected-" + id).textContent = value;
+            document.getElementById(id + "-options").style.display = "none";
+            document.getElementById("error-" + id).style.display = "none";
+        }
+
+        document.addEventListener("click", function(event) {
+            if (!event.target.matches(".select-selected")) {
+                document.querySelectorAll(".select-items").forEach(el => el.style.display = "none");
+            }
+        });
+
+        document.getElementById("feedbackForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let feedbackData = JSON.parse(localStorage.getItem('feedbackData')) || [];
+            let responses = {};
+            let isValid = true;
+            
+            questions.forEach((_, index) => {
+                let answer = document.getElementById(`q${index}`).value;
+                if (!answer) {
+                    document.getElementById(`error-q${index}`).style.display = "block";
+                    isValid = false;
+                } else {
+                    responses[`q${index}`] = answer;
+                }
+            });
+
+            if (!isValid) return;
+
+            feedbackData.push({
+                rollNumber: rollNumber,
+                section: section,
+                subject: subjects[subjectIndex],
+                responses: responses
+            });
+            localStorage.setItem('feedbackData', JSON.stringify(feedbackData));
+
+            alert(`Feedback completed for subject: ${subjects[subjectIndex]}`);
+            subjectIndex++;
+            document.getElementById('subjectIndex').value = subjectIndex;
+            displaySubject();
+        });
+
+        displaySubject();
+    </script>
+</body>
+</html>
