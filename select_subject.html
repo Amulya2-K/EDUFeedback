@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Subject</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Online Student Feedback System</h1>
+    </header>
+    <div class="container">
+        <h2>Select Your Subject</h2>
+        <form id="subjectForm" action="feedback.html" method="GET">
+            <input type="hidden" name="rollNumber" value="12345"> <!-- Example roll number -->
+            <input type="hidden" name="section" value="A"> <!-- Example section -->
+            <label for="subject">Choose your subject:</label>
+            <select id="subject" name="subject" required>
+                <option value="">Select Subject</option>
+                <option value="Operating System">Operating System</option>
+                <option value="Computer Organisation">Computer Organisation</option>
+                <option value="Database Management System">Database Management System</option>
+                <option value="Advanced Data Structures through Java">Advanced Data Structures through Java</option>
+                <option value="Software Engineering">Software Engineering</option>
+            </select>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
+</html>

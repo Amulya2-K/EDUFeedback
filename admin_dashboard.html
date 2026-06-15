@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+</head>
+<body>
+
+  <h2>Collected Feedback</h2>
+  <div id="feedbackContainer"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const container = document.getElementById("feedbackContainer");
+      const feedbackList = JSON.parse(localStorage.getItem("feedbackList")) || [];
+
+      if (feedbackList.length === 0) {
+        container.innerHTML = "<p>No feedback available.</p>";
+        return;
+      }
+
+      feedbackList.forEach((item, index) => {
+        const suggestion = generateSuggestion(item.feedback);
+        const div = document.createElement("div");
+        div.innerHTML = `<h4>Feedback ${index + 1}</h4>
+                         <p><strong>Name:</strong> ${item.name}</p>
+                         <p><strong>Feedback:</strong> ${item.feedback}</p>
+                         <p><strong>Suggestion:</strong> ${suggestion}</p>
+                         <hr>`;
+        container.appendChild(div);
+      });
+
+      function generateSuggestion(text) {
+        const lower = text.toLowerCase();
+        if (lower.includes("boring") || lower.includes("dull")) {
+          return "Improve engagement with interactive content.";
+        } else if (lower.includes("difficult") || lower.includes("hard")) {
+          return "Clarify complex topics with examples.";
+        } else if (lower.includes("good") || lower.includes("great") || lower.includes("excellent")) {
+          return "Keep up the good work!";
+        } else if (lower.includes("slow") || lower.includes("late")) {
+          return "Try to improve pace or punctuality.";
+        } else {
+          return "No specific suggestion. Review manually.";
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
